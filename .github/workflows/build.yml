@@ -1,33 +1,45 @@
-name: Build APK
+on: [push, pull_request]
 
-on:
-  push:
-    branches:
-      - main
+env:
+  PYTHONFORANDROID_PREREQUISITES_INSTALL_INTERACTIVE: 0
 
+name: Android Integration
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  Integration:
+    strategy:
+      matrix:
+        os:
+          - 'ubuntu-latest'
+          - 'macOs-latest'
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2.6.4
-
-      - name: Set up Python
-        uses: actions/setup-python@v2.5.2
-        with:
-          python-version: 3.x
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git
-          python -m pip install --upgrade pip
-          pip install cython kivy buildozer
-
-      - name: Build APK
-        run: |
-          cd $GITHUB_WORKSPACE
-          buildozer init
-          # Edit buildozer.spec if needed
-          buildozer -v android debug
+    - name: Setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - uses: actions/checkout@v4
+    - name: Setup environment
+      run: |
+        pip install .
+    - run: buildozer --help
+    - run: buildozer init
+    - name: SDK, NDK and p4a download
+      run: |
+        sed -i.bak "s/# android.accept_sdk_license = False/android.accept_sdk_license = True/" buildozer.spec
+        sed -i.bak "s/#p4a.branch = master/p4a.branch = develop/" buildozer.spec
+        buildozer android p4a -- --help
+    # Install OS specific dependencies
+    - name: Install Linux dependencies
+      if: matrix.os == 'ubuntu-latest'
+      # Required by some p4a recipes, but not
+      # installed by p4a on Linux.
+      run: sudo apt -y install automake        
+    - name: Debug Build
+      run: |
+        touch main.py
+        buildozer android debug
+    - name: Release Build (aab)
+      run: |
+        touch main.py
+        export BUILDOZER_ALLOW_ORG_TEST_DOMAIN=1
+        buildozer android release
