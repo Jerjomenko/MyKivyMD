@@ -42,7 +42,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy==master, https://github.com/kivymd/KivyMD/archive/master.zip, pillow==8.3.1
+requirements = python3, kivy==master, kivymd, pillow==8.3.1
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -116,7 +116,7 @@ android.presplash_color = black
 #android.minapi = 21
 
 # (int) Android SDK version to use
-#android.sdk = 20
+android.sdk = 34
 
 # (str) Android NDK version to use
 #android.ndk = 23b
@@ -142,7 +142,7 @@ android.presplash_color = black
 # agreements. This is intended for automation only. If set to False,
 # the default, you will be shown the license when first running
 # buildozer.
-# android.accept_sdk_license = False
+android.accept_sdk_license = True
 
 # (str) Android entry point, default is ok for Kivy-based app
 #android.entrypoint = org.kivy.android.PythonActivity
@@ -233,6 +233,7 @@ android.presplash_color = black
 # please enclose in double quotes 
 # e.g. android.add_packaging_options = "exclude 'META-INF/common.kotlin_module'", "exclude 'META-INF/*.kotlin_module'"
 #android.add_packaging_options =
+android.packages = aidl
 
 # (list) Java classes to add as activities to the manifest.
 #android.add_activities = com.example.ExampleActivity
