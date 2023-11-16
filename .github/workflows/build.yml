@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install python3-setuptools
+          python3 -m pip install distutils
 
       - name: Install Buildozer dependencies
         run: |
