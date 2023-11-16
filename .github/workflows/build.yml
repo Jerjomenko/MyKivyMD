@@ -1,43 +1,47 @@
-name: CI
+name: Android Build
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main # oder der Name deines Hauptbranches
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x' # Versionsnummer von Python
+
+      - name: Install Buildozer dependencies
         run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-        shell: bash
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            ccache \
+            git \
+            libncurses5 \
+            libstdc++6 \
+            zlib1g-dev \
+            openjdk-8-jdk \
+            unzip \
+            python3-pip
+          pip3 install --upgrade cython virtualenv
 
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v2
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
+      - name: Install Buildozer
+        run: pip3 install --user buildozer
 
-      - uses: actions/cache@v2
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+      - name: Build APK with Buildozer
+        run: |
+          buildozer android debug
 
-      - name: Build with Buildozer
-        uses: Jerjomenko/MyKivyMD/buildozer-actions@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: main
-
-
-      - name: Upload artifacts
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
-          name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+          name: my_app_debug
+          path: ./bin/*.apk # Pfade entsprechend deiner APK-Generierung anpassen
