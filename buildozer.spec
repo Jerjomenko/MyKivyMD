@@ -18,10 +18,10 @@ package.domain = org.jerjomenko
 source.dir = .
 
 # (list) Source files to include (leave empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,ttf
+source.include_exts = py,png,jpg,kv,atlas,ttf,ico
 
 # (list) List of inclusions using pattern matching
-source.include_patterns = assets/*,img/*.png,img/*.jpg
+source.include_patterns = assets/*,img/*.png,img/*.jpg,img/*.ico,img/
 
 # (list) Source files to exclude (leave empty to not exclude anything)
 #source.exclude_exts = spec
@@ -49,7 +49,7 @@ requirements = python3, kivy==master, kivymd, pillow==8.3.1
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-presplash.filename = %(source.dir)s/data/presplash.png
+#presplash.filename = %(source.dir)s/data/presplash.png
 
 # (str) Icon of the application
 #icon.filename = %(source.dir)s/data/icon.png
